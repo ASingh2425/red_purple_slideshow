@@ -56,7 +56,7 @@ const launchToken = (function() {
 
 const cta = document.querySelector('.cta');
 if (cta) {
-  const base = 'https://purplezone-frontend.vercel.app/';
+  const base = 'https://last-dataset.vercel.app/purple';
   const params = new URLSearchParams();
   if (teamId) params.set('team', teamId);
   if (launchToken) params.set('launchToken', launchToken);

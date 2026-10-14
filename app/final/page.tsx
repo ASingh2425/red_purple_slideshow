@@ -15,8 +15,8 @@ export default async function FinalRedirectPage({
   
   const queryStr = params.toString();
   const targetUrl = queryStr
-    ? `https://purplezone-frontend.vercel.app/?${queryStr}`
-    : "https://purplezone-frontend.vercel.app/";
+    ? `https://last-dataset.vercel.app/purple?${queryStr}`
+    : "https://last-dataset.vercel.app/purple";
     
   redirect(targetUrl);
 }
