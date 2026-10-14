@@ -25,3 +25,30 @@ window.addEventListener('keydown', (event) => {
 });
 
 showSlide(0);
+
+try {
+  const p = new URLSearchParams(window.location.search);
+  const t = (p.get('team') || p.get('teamId') || '').trim();
+  if (t) {
+    sessionStorage.setItem('manu_team_id', t);
+    localStorage.setItem('manu_team_id', t);
+  }
+} catch (e) {}
+
+const teamId = (function() {
+  try {
+    const p = new URLSearchParams(window.location.search);
+    return (p.get('team') || p.get('teamId') || sessionStorage.getItem('manu_team_id') || localStorage.getItem('manu_team_id') || '').trim();
+  } catch (e) { return ''; }
+})();
+
+const cta = document.querySelector('.cta');
+if (cta) {
+  const base = 'https://last-dataset-map-hub.vercel.app/purple';
+  cta.href = teamId ? `${base}?team=${encodeURIComponent(teamId)}` : base;
+}
+
+const mapBtn = document.querySelector('#central-map-link');
+if (mapBtn && teamId) {
+  mapBtn.href = `https://last-dataset-map-hub.vercel.app/?team=${encodeURIComponent(teamId)}`;
+}
