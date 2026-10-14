@@ -29,9 +29,14 @@ showSlide(0);
 try {
   const p = new URLSearchParams(window.location.search);
   const t = (p.get('team') || p.get('teamId') || '').trim();
+  const lt = (p.get('launchToken') || '').trim();
   if (t) {
     sessionStorage.setItem('manu_team_id', t);
     localStorage.setItem('manu_team_id', t);
+  }
+  if (lt) {
+    sessionStorage.setItem('tld_launch_token', lt);
+    localStorage.setItem('tld_launch_token', lt);
   }
 } catch (e) {}
 
@@ -42,10 +47,21 @@ const teamId = (function() {
   } catch (e) { return ''; }
 })();
 
+const launchToken = (function() {
+  try {
+    const p = new URLSearchParams(window.location.search);
+    return (p.get('launchToken') || sessionStorage.getItem('tld_launch_token') || localStorage.getItem('tld_launch_token') || '').trim();
+  } catch (e) { return ''; }
+})();
+
 const cta = document.querySelector('.cta');
 if (cta) {
-  const base = 'https://last-dataset.vercel.app/purple';
-  cta.href = teamId ? `${base}?team=${encodeURIComponent(teamId)}` : base;
+  const base = 'https://purplezone-frontend.vercel.app/';
+  const params = new URLSearchParams();
+  if (teamId) params.set('team', teamId);
+  if (launchToken) params.set('launchToken', launchToken);
+  const qs = params.toString();
+  cta.href = qs ? `${base}?${qs}` : base;
 }
 
 const mapBtn = document.querySelector('#central-map-link');
