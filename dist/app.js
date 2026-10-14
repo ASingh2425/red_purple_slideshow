@@ -26,33 +26,53 @@ window.addEventListener('keydown', (event) => {
 
 showSlide(0);
 
+let effectiveTeamId = '';
+let effectiveLaunchToken = '';
+
 try {
   const p = new URLSearchParams(window.location.search);
-  const t = (p.get('team') || p.get('teamId') || '').trim();
-  const lt = (p.get('launchToken') || '').trim();
-  if (t) {
-    sessionStorage.setItem('manu_team_id', t);
-    localStorage.setItem('manu_team_id', t);
+  const urlTeam = (p.get('team') || p.get('teamId') || '').trim().toUpperCase();
+  const urlToken = (p.get('launchToken') || '').trim();
+
+  let storedTeam = (sessionStorage.getItem('manu_team_id') || localStorage.getItem('manu_team_id') || '').trim().toUpperCase();
+  let storedToken = (sessionStorage.getItem('tld_launch_token') || localStorage.getItem('tld_launch_token') || '').trim();
+
+  // Purge stale TECHTEAM10328
+  if (storedTeam === 'TECHTEAM10328' && urlTeam !== 'TECHTEAM10328') {
+    sessionStorage.removeItem('manu_team_id');
+    localStorage.removeItem('manu_team_id');
+    sessionStorage.removeItem('tld_launch_token');
+    localStorage.removeItem('tld_launch_token');
+    storedTeam = '';
+    storedToken = '';
   }
-  if (lt) {
-    sessionStorage.setItem('tld_launch_token', lt);
-    localStorage.setItem('tld_launch_token', lt);
+
+  effectiveTeamId = urlTeam || (storedTeam !== 'TECHTEAM10328' ? storedTeam : '');
+  effectiveLaunchToken = urlToken || storedToken;
+
+  if (effectiveLaunchToken && effectiveTeamId && effectiveTeamId !== 'TECHTEAM10328') {
+    try {
+      const payload = JSON.parse(atob(effectiveLaunchToken.split('.')[0].replace(/-/g, '+').replace(/_/g, '/')));
+      if (payload && (payload.teamId === 'TECHTEAM10328' || payload.team === 'TECHTEAM10328')) {
+        effectiveLaunchToken = '';
+        sessionStorage.removeItem('tld_launch_token');
+        localStorage.removeItem('tld_launch_token');
+      }
+    } catch (_) {}
+  }
+
+  if (effectiveTeamId && effectiveTeamId !== 'TECHTEAM10328') {
+    sessionStorage.setItem('manu_team_id', effectiveTeamId);
+    localStorage.setItem('manu_team_id', effectiveTeamId);
+  }
+  if (effectiveLaunchToken) {
+    sessionStorage.setItem('tld_launch_token', effectiveLaunchToken);
+    localStorage.setItem('tld_launch_token', effectiveLaunchToken);
   }
 } catch (e) {}
 
-const teamId = (function() {
-  try {
-    const p = new URLSearchParams(window.location.search);
-    return (p.get('team') || p.get('teamId') || sessionStorage.getItem('manu_team_id') || localStorage.getItem('manu_team_id') || '').trim();
-  } catch (e) { return ''; }
-})();
-
-const launchToken = (function() {
-  try {
-    const p = new URLSearchParams(window.location.search);
-    return (p.get('launchToken') || sessionStorage.getItem('tld_launch_token') || localStorage.getItem('tld_launch_token') || '').trim();
-  } catch (e) { return ''; }
-})();
+const teamId = effectiveTeamId;
+const launchToken = effectiveLaunchToken;
 
 const cta = document.querySelector('.cta');
 if (cta) {
