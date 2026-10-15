@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en"><body><script dangerouslySetInnerHTML={{ __html: 'window.location.replace("https://the-last-dataset-jqpr.vercel.app/");' }} /><meta http-equiv="refresh" content="0; url=https://the-last-dataset-jqpr.vercel.app/" />{children}</body></html>;
 }

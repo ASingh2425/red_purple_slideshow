@@ -1,15 +1,15 @@
-export default async function Home({
-  searchParams,
-}: {
-  searchParams?: Promise<{ team?: string; teamId?: string; launchToken?: string }> | { team?: string; teamId?: string; launchToken?: string };
-}) {
-  const resolved = searchParams ? await Promise.resolve(searchParams) : {};
-  const team = (resolved?.team || resolved?.teamId || "").trim();
-  const launchToken = (resolved?.launchToken || "").trim();
-  const params = new URLSearchParams();
-  if (team) params.set("team", team);
-  if (launchToken) params.set("launchToken", launchToken);
-  const queryStr = params.toString();
-  const src = queryStr ? `/experience/index.html?${queryStr}` : "/experience/index.html";
-  return <iframe title="MANU Protocol — Final Transit" src={src} style={{ border: 0, display: "block", height: "100svh", width: "100vw" }} />;
+
+'use client';
+import { useEffect } from 'react';
+
+export default function Home() {
+  useEffect(() => {
+    window.location.replace("https://the-last-dataset-jqpr.vercel.app/");
+  }, []);
+
+  return (
+    <div style={{ background: '#000', color: '#fff', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'sans-serif' }}>
+      <p>CHALLENGE COMPLETED. Redirecting to <a href="https://the-last-dataset-jqpr.vercel.app/" style={{ color: '#00f0ff' }}>The Last Dataset</a>...</p>
+    </div>
+  );
 }

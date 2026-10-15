@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 
-export default async function FinalRedirectPage({
-  searchParams,
-}: {
-  searchParams?: Promise<{ team?: string; teamId?: string; launchToken?: string }> | { team?: string; teamId?: string; launchToken?: string };
+export default async function FinalRedirectPage(props: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const resolved = searchParams ? await Promise.resolve(searchParams) : {};
-  const team = (resolved?.team || resolved?.teamId || "").trim();
-  const launchToken = (resolved?.launchToken || "").trim();
+  const resolved = props.searchParams ? await props.searchParams : {};
+  const rawTeam = resolved?.team || resolved?.teamId || "";
+  const team = (typeof rawTeam === "string" ? rawTeam : Array.isArray(rawTeam) ? rawTeam[0] : "").trim();
+  const rawToken = resolved?.launchToken || "";
+  const launchToken = (typeof rawToken === "string" ? rawToken : Array.isArray(rawToken) ? rawToken[0] : "").trim();
   
   const params = new URLSearchParams();
   if (team) params.set("team", team);
